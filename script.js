@@ -23,7 +23,7 @@ async function populateCurrencyDropdowns() {
     const conversionRates = await fetchExchangeRates(defaultBase);
 
     if (conversionRates) {
-        const currencies = Object.keys(conversionRates).filter(currency => currency !== 'USD');
+        const currencies = Object.keys(conversionRates);
         const fromDropdown = document.getElementById('fromCurrency');
         const toDropdown = document.getElementById('toCurrency');
         const currencyToAddDropdown = document.getElementById('currencyToAdd');
@@ -31,24 +31,27 @@ async function populateCurrencyDropdowns() {
         currencies.forEach(currency => {
             let option1 = document.createElement('option');
             let option2 = document.createElement('option');
-            let option3 = document.createElement('option');
-
             option1.value = currency;
             option1.text = currency;
             option2.value = currency;
             option2.text = currency;
-            option3.value = currency;
-            option3.text = currency;
-
             fromDropdown.appendChild(option1);
             toDropdown.appendChild(option2);
-            currencyToAddDropdown.appendChild(option3);
+
+            // Exclude USD from the "Add to Watchlist" dropdown
+            if (currency !== 'USD') {
+                let option3 = document.createElement('option');
+                option3.value = currency;
+                option3.text = currency;
+                currencyToAddDropdown.appendChild(option3);
+            }
         });
 
         fromDropdown.selectedIndex = 0;
         toDropdown.selectedIndex = 1;
     }
 }
+
 
 // Watchlist functionality
 const watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];

@@ -6,7 +6,7 @@ I have created a currency converter application that converts between different 
 
 I wrote this software to help me run calcuations between USD and EUR for my business in Portugal.
 
-[Software Demo Video](https://youtu.be/jupgabku1xc)
+[Software Demo Video] https://www.loom.com/share/8587ef781edf4b72b01dd55c689ee1d1?sid=37ef7332-4e96-4265-ade8-74d0eaf5dbf3
 
 # Development Environment
 
