@@ -19,5 +19,5 @@ I developed this software in VSCode using Javascript and ExchangeRate-API
 
 # Future Work
 
-- I'd like to add a dashboard that shows some common exhanges and automatically updates them
-- I'd like to improve the overall look of the webpage using CSS
+- I'd like to add a favorites dashboard that shows live exchange rates for selected currencies (I did this on round 2)
+- I'd like to improve the overall look of the webpage using CSS (I did this on round 2)

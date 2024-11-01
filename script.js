@@ -1,4 +1,4 @@
-//API
+// API
 const apiKey = 'b0382669c9328837aaf0f69d';
 const apiURL = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/`;
 
@@ -23,25 +23,84 @@ async function populateCurrencyDropdowns() {
     const conversionRates = await fetchExchangeRates(defaultBase);
 
     if (conversionRates) {
-        const currencies = Object.keys(conversionRates);
+        const currencies = Object.keys(conversionRates).filter(currency => currency !== 'USD');
         const fromDropdown = document.getElementById('fromCurrency');
         const toDropdown = document.getElementById('toCurrency');
+        const currencyToAddDropdown = document.getElementById('currencyToAdd');
 
         currencies.forEach(currency => {
             let option1 = document.createElement('option');
             let option2 = document.createElement('option');
+            let option3 = document.createElement('option');
+
             option1.value = currency;
             option1.text = currency;
             option2.value = currency;
             option2.text = currency;
+            option3.value = currency;
+            option3.text = currency;
+
             fromDropdown.appendChild(option1);
             toDropdown.appendChild(option2);
+            currencyToAddDropdown.appendChild(option3);
         });
 
         fromDropdown.selectedIndex = 0;
         toDropdown.selectedIndex = 1;
     }
 }
+
+// Watchlist functionality
+const watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+
+function addToWatchlist(currency) {
+    if (!watchlist.includes(currency)) {
+        watchlist.push(currency);
+        localStorage.setItem('watchlist', JSON.stringify(watchlist));
+        displayWatchlist();
+    }
+}
+
+function displayWatchlist() {
+    const container = document.getElementById('watchlist');
+    container.innerHTML = ''; // Clear previous content
+    const baseCurrency = 'USD';
+
+    fetchExchangeRates(baseCurrency).then(conversionRates => {
+        if (conversionRates) {
+            watchlist.forEach(currency => {
+                const rate = conversionRates[currency];
+                const item = document.createElement('div');
+                item.className = 'watchlist-item';
+                item.innerHTML = `
+                    <p>
+                        ${currency}: ${rate.toFixed(2)} <span class="live-dot"></span> 
+                        <span class="live-rate-text"><i>live rate</i></span>
+                    </p>
+                    <button class="remove-btn" onclick="removeFromWatchlist('${currency}')">Remove</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+    });
+}
+
+// Event listener for the "Add to Watchlist" button
+document.getElementById('addToWatchlistBtn').addEventListener('click', () => {
+    const currencyToAdd = document.getElementById('currencyToAdd').value;
+    if (currencyToAdd) {
+        addToWatchlist(currencyToAdd);
+    }
+});
+
+// Fetch and display watchlist on page load
+displayWatchlist();
+
+// Attach event listener to the button
+document.getElementById('convertBtn').addEventListener('click', convertCurrency);
+
+// Initialize dropdowns with API data
+populateCurrencyDropdowns();
 
 // Fetch and calculate exchange rate dynamically
 async function convertCurrency() {
@@ -71,11 +130,12 @@ async function convertCurrency() {
     }
 }
 
-// Attach event listener to the button
-document.getElementById('convertBtn').addEventListener('click', convertCurrency);
-
-// Initialize dropdowns with API data
-populateCurrencyDropdowns();
-
-
-
+// Remove currency from watchlist 
+function removeFromWatchlist(currency) {
+    const index = watchlist.indexOf(currency);
+    if (index !== -1) {
+        watchlist.splice(index, 1);
+        localStorage.setItem('watchlist', JSON.stringify(watchlist));
+        displayWatchlist();
+    }
+}
